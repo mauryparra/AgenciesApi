@@ -1,8 +1,8 @@
 # AgenciesApi
-Projecto con una API que extiende la API de agencias  https://agencies.docs.apiary.io/#introduction/get-nearest-agencies-by-geopoint y por consola permite ejecutar los métodos desde consola
+Projecto con una API que extiende la API de agencias cercanas agregando funcionalidad de distintos ordenamientos  https://agencies.docs.apiary.io/#introduction/get-nearest-agencies-by-geopoint
 
 ## Modo de uso
-Para utilizar la api se debe hacer una llamada HTTP GET al endpoint /agencias y especificar por ruta los siguientes parametros:
+Para utilizar la api se debe hacer una llamada HTTP GET al endpoint "/agencias" y especificar por ruta los siguientes parametros:
 ```
 {SITE_ID}
 (Requerido) Identificador de pagina regional de Mercado Libre. 
