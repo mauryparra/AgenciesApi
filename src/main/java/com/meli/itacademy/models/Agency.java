@@ -1,6 +1,6 @@
 package com.meli.itacademy.models;
 
-public class Agency {
+public class Agency implements Comparable<Agency> {
 
     private Address address;
     private String agency_code;
@@ -13,6 +13,14 @@ public class Agency {
     private String phone;
     private String site_id;
     private String terminal;
+
+    private static Ordenador ordenador;
+
+    public enum Ordenador {
+        ADDRESS_LINE,
+        AGENCY_CODE,
+        DISTANCE
+    }
 
     public Agency() {
     }
@@ -103,5 +111,31 @@ public class Agency {
 
     public void setTerminal(String terminal) {
         this.terminal = terminal;
+    }
+
+    public static Ordenador getOrdenador() {
+        return ordenador;
+    }
+
+    public static void setOrdenador(Ordenador ordenador) {
+        Agency.ordenador = ordenador;
+    }
+
+    @Override
+    public int compareTo(Agency o) {
+        switch (ordenador) {
+            default:
+            case DISTANCE:
+                return new Float(this.distance).compareTo(new Float(o.distance));
+            case AGENCY_CODE:
+                return this.agency_code.compareTo(o.agency_code);
+            case ADDRESS_LINE:
+                return this.address.getAddress_line().compareTo(o.address.getAddress_line());
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (this.compareTo((Agency) o) == 0);
     }
 }

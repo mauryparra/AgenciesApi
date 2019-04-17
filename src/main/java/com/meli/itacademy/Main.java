@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 
 public class Main {
 
@@ -21,12 +20,26 @@ public class Main {
         // Entrada Api propia que llama a API Mercado Libre
         get("/agencias", (request, response) -> {
             response.type("application/json");
+
+            switch (request.queryParams("order_by").toUpperCase()) {
+                default:
+                case "DISTANCE":
+                    Agency.setOrdenador(Agency.Ordenador.DISTANCE);
+                    break;
+                case "ADDRESS_LINE":
+                    Agency.setOrdenador(Agency.Ordenador.ADDRESS_LINE);
+                    break;
+                case "AGENCY_CODE":
+                    Agency.setOrdenador(Agency.Ordenador.AGENCY_CODE);
+                    break;
+            }
+
             Agency[] agencies;
 
             if (request.queryParams("site_id").equals("") ||
                     request.queryParams("payment_method_id").equals("")
             ) {
-                return new Gson().toJson("Parametros faltantes");
+                return new Gson().toJson("Parametros faltantes site_id y payment_method_id son obligatorios");
             }
 
             try {
@@ -36,13 +49,14 @@ public class Main {
                         request.queryParams("payment_method_id") +
                         "/agencies?near_to=" + request.queryParams("near_to") +
                         "&limit=" + request.queryParams("limit") +
-                        "&offset=" + request.queryParams("offset") +
-                        "&order_by" + request.queryParams("order_by")
+                        "&offset=" + request.queryParams("offset")
                 );
 
                 JsonObject jsonObject = new JsonParser().parse(data).getAsJsonObject();
 
                 agencies = new Gson().fromJson(jsonObject.get("results"), Agency[].class);
+
+                Comparador.ordenar(agencies);
 
                 return new Gson().toJsonTree(agencies);
 
@@ -50,6 +64,10 @@ public class Main {
                 e.printStackTrace();
                 System.out.println("Ocurrio un error al obtener las agencias");
                 return new Gson().toJson("Ocurrio un error al obtener las agencias");
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+                System.out.println("Se trato de ordenar un array vacio");
+                return new Gson().toJson("Se trato de ordenar un array vacio");
             }
         });
     }
