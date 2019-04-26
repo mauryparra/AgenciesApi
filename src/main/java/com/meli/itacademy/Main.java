@@ -21,14 +21,14 @@ public class Main {
         get("/agencias", (request, response) -> {
             response.type("application/json");
 
-            switch (request.queryParams("order_by").toUpperCase()) {
-                default:
+            switch (request.queryParamOrDefault("order_by", "AGENCY_CODE").toUpperCase()) {
                 case "DISTANCE":
                     Agency.setOrdenador(Agency.Ordenador.DISTANCE);
                     break;
                 case "ADDRESS_LINE":
                     Agency.setOrdenador(Agency.Ordenador.ADDRESS_LINE);
                     break;
+                default:
                 case "AGENCY_CODE":
                     Agency.setOrdenador(Agency.Ordenador.AGENCY_CODE);
                     break;
@@ -47,9 +47,9 @@ public class Main {
                         request.queryParams("site_id") +
                         "/payment_methods/" +
                         request.queryParams("payment_method_id") +
-                        "/agencies?near_to=" + request.queryParams("near_to") +
-                        "&limit=" + request.queryParams("limit") +
-                        "&offset=" + request.queryParams("offset")
+                        "/agencies?near_to=" + request.queryParamOrDefault("near_to", "") +
+                        "&limit=" + request.queryParamOrDefault("limit", "") +
+                        "&offset=" + request.queryParamOrDefault("offset", "")
                 );
 
                 JsonObject jsonObject = new JsonParser().parse(data).getAsJsonObject();
@@ -68,6 +68,10 @@ public class Main {
                 e.printStackTrace();
                 System.out.println("Se trato de ordenar un array vacio");
                 return new Gson().toJson("Se trato de ordenar un array vacio");
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Ocurrio un error inesperado");
+                return new Gson().toJson("Ocurrio un error inesperado");
             }
         });
     }
